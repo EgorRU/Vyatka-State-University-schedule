@@ -1,19 +1,8 @@
 ## Установка и запуск на Windows
-- git clone https://github.com/EgorRU/Bot-for-telegram-chat
-- cd Bot-for-telegram-chat
+- git clone https://github.com/EgorRU/Vyatka-State-University-schedule
+- cd Vyatka-State-University-schedule
 - pip install -r requirements.txt
 - py main.py
 
 ## Команды
 - /start - начать пользоваться
-- /select <> - посмотреть файлы по названию в текущем чате
-- /document - вывести все документы текущего чата
-- /photo - вывести все фотографии текущего чата
-- /link - вывести все ссылки текущего чата
-- /schedule - вывести расписание ВятГУ
-
-## Команды для админа
-
-- /alldocument - посмотреть все файлы, которые были зафикисрованы ботом во всех чатах
-- /alllink - посмотреть ссылки, которые были зафикисрованы ботом во всех чатах
-- /allphoto - посмотреть все фото, которые были зафикисрованы ботом во всех чатах

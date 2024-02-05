@@ -1,9 +1,9 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 import asyncio
-from handlers.chat_monitoring import chat_monitoring
-from handlers.schedule import schedule
+
 from config import TOKEN_BOT
+from handlers import schedule_router
 
 
 bot = Bot(token=TOKEN_BOT)
@@ -11,8 +11,7 @@ dp = Dispatcher(storage=MemoryStorage())
 
 
 async def main():
-    dp.include_router(schedule)
-    dp.include_router(chat_monitoring)
+    dp.include_router(schedule_router)
     await dp.start_polling(bot)
 
 
