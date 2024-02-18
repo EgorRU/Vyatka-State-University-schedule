@@ -1,65 +1,42 @@
-from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters import StateFilter
-from aiogram.fsm.context import FSMContext
-from parsing_schedule import ScheduleGroups
-from parsing_schedule import FilterGroup
-from parsing_schedule import get_keyboard
-from parsing_schedule import get_schedule
+from aiogram import Router
+from aiogram.types import Message, CallbackQuery
+from aiogram.types.input_file import FSInputFile
+import os
+
+from config import bot
+from parsing import get_keyboard
+from parsing import get_files
+
 
 
 schedule_router = Router()
 
-#команда старт
-@schedule_router.message(F.text.startswith("/start"), StateFilter(None))
-async def start(message: Message, state: FSMContext):
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Отмена', callback_data='Отмена')]])
-    await message.answer("Напишите учебную групу в виде: ЮРб-1, ЮР-1, Юрб 1 или ЮРб-1901-01-00", reply_markup=keyboard)
-    await state.set_state(ScheduleGroups.name_group)
 
-
-#команда отмена
-@schedule_router.callback_query(ScheduleGroups.name_group, F.data == 'Отмена')
-async def cancel_state(callback: CallbackQuery, state: FSMContext):
-    await state.clear()
-    try:
-        await callback.message.delete()
-    except:
-        pass
-    await callback.answer()
-    
-
-#получение имени группы и отправка клавиатуры с предполагаемой группой для выбора
-@schedule_router.message(ScheduleGroups.name_group)
-async def find_name_group(message: Message, state: FSMContext):
+@schedule_router.message()
+async def find_name_group(message: Message):
     if message.text == "/start":
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Отмена', callback_data='Отмена')]])
-        await message.answer("Напишите учебную групу в виде: ЮРб-1, ЮР-1, Юрб 1 или ЮРб-1901-01-00", reply_markup=keyboard)
-        await state.set_state(ScheduleGroups.name_group)
+        msg = await bot.send_message(message.chat.id, 'Напишите учебную групу в виде: ЮРб-1, ЮР-1, Юрб 1 или ЮРб-1901-01-00')
     else:
-        await message.answer("Немного подождите... ищем учебные группы в базе данных")
+        msg = await bot.send_message(message.chat.id, 'Немного подождите... ищем учебные группы в базе данных')
         keyboard = await get_keyboard(message.text)
-        if keyboard==None:
-            keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Отмена', callback_data='Отмена')]])
-            await message.answer("Не могу найти такую группу, попробуйте ещё раз ввести группу", reply_markup=keyboard)
+        if keyboard == None:
+            await bot.edit_message_text(chat_id=message.chat.id, message_id=msg.message_id, text='Не могу найти такую группу, попробуйте ещё раз ввести группу')
         else:
-            await message.answer("Выберите группу", reply_markup=keyboard)
+            await bot.edit_message_text(chat_id=message.chat.id, message_id=msg.message_id, text="Выберите группу", reply_markup=keyboard)
 
 
 #получение нажатия на кнопку и отправка расписания
 @schedule_router.callback_query()
-async def get_schedule_for_group(callback):
-    await callback.message.answer("Немного подождите... ищем раписание для этой учебной группы")
+async def get_schedule_for_group(callback: CallbackQuery):
+    msg = await bot.send_message(chat_id=callback.message.chat.id, text='Немного подождите... ищем расписание в базе данных')
     await callback.answer()
-    name_group = callback.data
-    url = await get_schedule(name_group)
-    if url != None:
-        try:
-            await callback.message.delete()
-        except:
-            pass
-        await callback.message.answer(url)
+    list_files = await get_files(callback.data)
+    await bot.delete_message(callback.message.chat.id, msg.message_id)
+    if list_files:
+        for file in list_files:
+            input_file = FSInputFile(file)
+            await bot.send_document(callback.message.chat.id, input_file)
+            os.remove(file)
     else:
-        await callback.message.answer("Сервер не доступен")
-    await callback.answer()
+        await bot.send_message(callback.message.chat.id, 'Сервер не доступен')
     
