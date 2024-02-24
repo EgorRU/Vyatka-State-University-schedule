@@ -1,14 +1,18 @@
-from aiogram import Dispatcher
 import asyncio
-from config import bot
-from handlers import schedule_router
+from multiprocessing import Process
+from bot import main as start_bot
+from parsing_pdf import main as start_parsing_pdf
+from parsing_xlsx import main as start_parsing_xlsx
 
-
-dp = Dispatcher()
 
 async def main():
-    dp.include_router(schedule_router)
-    await dp.start_polling(bot)
+    p1 = Process(target=start_bot)
+    p2 = Process(target=start_parsing_pdf)
+    p3 = Process(target=start_parsing_xlsx)
+    
+    p1.start()
+    p2.start()
+    p3.start()
 
 
 if __name__ == '__main__':

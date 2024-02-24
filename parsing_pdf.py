@@ -53,7 +53,7 @@ async def get_content(url: str):
     return requests.get(url, headers=user_agent)
 
 
-# получение спика из групп
+# получение списка из групп
 async def get_name_groups(response):
     soup = BeautifulSoup(response.text, 'lxml')
     list_groups = soup.find_all('div', class_='grpPeriod')
@@ -95,7 +95,6 @@ async def get_url_schedule(response, list_groups: List[str]) -> dict[str, List[s
             day_end = int(temp_url[-8:-6])
             date = datetime.date(year_end, month_end, day_end)
             current_date = datetime.date.today()
-            # если текущая дата больше, чем последний день с раписанием, то удаляем ссылку
             if current_date < date:
                 # добавляем ссылку в словарь
                 if name_group in schedule:
@@ -133,7 +132,6 @@ async def get_url_schedule(response, list_groups: List[str]) -> dict[str, List[s
             day_end = int(temp_url[-8:-6])
             date = datetime.date(year_end, month_end, day_end)
             current_date = datetime.date.today()
-            # если текущая дата больше, чем последний день с раписанием, то удаляем ссылку
             if current_date < date:
                 # добавляем ссылку в словарь
                 if name_group in schedule:
@@ -210,7 +208,7 @@ async def update_db(schedule: dict[str, List[str]]):
     base.close()
     
 
-async def main():
+async def start_parsing_pdf():
     while True:
         
         print(f"Время начала обновления: {datetime.datetime.now()}")
@@ -250,5 +248,9 @@ async def main():
         await asyncio.sleep(12000)
         
 
+def main():
+    asyncio.run(start_parsing_pdf())
+    
+
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(start_parsing_pdf())

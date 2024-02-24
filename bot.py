@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, Dispatcher
 from aiogram.types import Message, CallbackQuery
 from config import bot
 from db import get_keyboard
@@ -39,3 +39,17 @@ async def get_schedule_for_group(callback: CallbackQuery):
             await asyncio.sleep(1)
     else:
         await bot.send_message(callback.message.chat.id, "Расписания для вашей группы ещё нет")
+        
+
+async def start_bot():
+    dp = Dispatcher()
+    dp.include_router(schedule_router)
+    await dp.start_polling(bot)
+
+
+def main():
+    asyncio.run(start_bot())
+    
+
+if __name__ == '__main__':
+    asyncio.run(start_bot())
