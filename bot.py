@@ -135,11 +135,14 @@ async def find_today(callback: CallbackQuery):
 @schedule_router.callback_query(F.data.startswith("Сегод")|F.data.startswith("Завтр")|F.data.startswith("После"))
 async def find_today(callback: CallbackQuery):
     keyboard, text = await get_keyboard(callback.data[5:], callback.data[:5])
-    text += '\nРасписание может быть изменено. Узнавайте актуальное расписание новым запросом.'
+    text += "Расписание может быть изменено. Узнавайте актуальное расписание новым запросом."
     try:
         await callback.message.edit_text(text, reply_markup=keyboard)
     except:
-        pass
+        while len(text)>4090:
+            await callback.message.answer(text[:4090])
+            text = text[4090:]
+        await callback.message.answer(text, reply_markup=keyboard)
     await callback.answer()
 
 
@@ -151,27 +154,74 @@ async def find_today(callback: CallbackQuery):
     try:
         await callback.message.answer(text)
     except:
-        index = text.find("➡️ Вторник |")
-        await callback.message.answer(text[:index])
-        text = text[index:]
+        try:
+            index = text.find("➡️ Вторник |")
+            await callback.message.answer(text[:index])
+            text = text[index:]
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
+            text = text[index:]
         
-        index = text.find("➡️ Среда |")
-        await callback.message.answer(text[:index])
-        text = text[index:]
-
-        index = text.find("➡️ Четверг |")
-        await callback.message.answer(text[:index])
-        text = text[index:]
+        try:
+            index = text.find("➡️ Среда |")
+            await callback.message.answer(text[:index])
+            text = text[index:]
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
+            text = text[index:]
+    
+        try:
+            index = text.find("➡️ Четверг |")
+            await callback.message.answer(text[:index])
+            text = text[index:]
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
+            text = text[index:]
         
-        index = text.find("➡️ Пятница |")
-        await callback.message.answer(text[:index])
-        text = text[index:]
+        try:
+            index = text.find("➡️ Пятница |")
+            await callback.message.answer(text[:index])
+            text = text[index:]
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
+            text = text[index:]
         
-        index = text.find("➡️ Суббота |")
-        await callback.message.answer(text[:index])
-        text = text[index:]
-        
-        await callback.message.answer(text)
+        try:
+            index = text.find("➡️ Суббота |")
+            await callback.message.answer(text[:index])
+            text = text[index:]
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
+            text = text[index:]
+            
+        try:
+            await callback.message.answer(text)
+        except:
+            new_text = text[:index]
+            while len(new_text)>4090:
+                await callback.message.answer(new_text[:4090])
+                new_text = new_text[4090:]
+            await callback.message.answer(new_text)
         
     await callback.message.answer(f"Фильтры расписания для {callback.data[20:]}", reply_markup=keyboard)
     await callback.answer()

@@ -177,23 +177,23 @@ async def get_schedule_by_date(valid_text, period):
                     text += f"➡️ {number_day_to_day_week[day.weekday()]} | {day}:\n"
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
-                    text += f"{day_data[2]}\n"
-                    text += f"{day_data[3]}\n"
-                    text += f"{day_data[4]}\n\n"
+                    text += f"{day_data[2]}\n" if day_data[2] != None else ""
+                    text += f"{day_data[3]}\n"  if day_data[3] != None else ""
+                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
                 elif day == day_data[0]:
                     is_global_true = True
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
-                    text += f"{day_data[2]}\n"
-                    text += f"{day_data[3]}\n"
-                    text += f"{day_data[4]}\n\n"
+                    text += f"{day_data[2]}\n" if day_data[2] != None else ""
+                    text += f"{day_data[3]}\n" if day_data[3] != None else ""
+                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
             if not is_true:
                 text += f"➡️ {number_day_to_day_week[day.weekday()]} | {day}:\n\nПар нет\n\n"
         
     if not is_global_true:
         next_day = list_date[-1] + datetime.timedelta(days=1)
         is_true = False
-        while not is_true:
+        while not is_true and next_day < full_data[-1][0] + datetime.timedelta(days=14):
             for day_data in full_data:
                 if next_day==day_data[0] and not is_true:
                     text += "Следующие пары\n\n"
@@ -201,14 +201,14 @@ async def get_schedule_by_date(valid_text, period):
                     text += f"➡️ {number_day_to_day_week[next_day.weekday()]} | {next_day}:\n"
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
-                    text += f"{day_data[2]}\n"
-                    text += f"{day_data[3]}\n"
-                    text += f"{day_data[4]}\n\n"
+                    text += f"{day_data[2]}\n" if day_data[2] != None else ""
+                    text += f"{day_data[3]}\n" if day_data[3] != None else ""
+                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
                 elif next_day == day_data[0]:
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
-                    text += f"{day_data[2]}\n"
-                    text += f"{day_data[3]}\n"
-                    text += f"{day_data[4]}\n\n"
+                    text += f"{day_data[2]}\n" if day_data[2] != None else ""
+                    text += f"{day_data[3]}\n" if day_data[3] != None else ""
+                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
             next_day += datetime.timedelta(days=1)
     return text

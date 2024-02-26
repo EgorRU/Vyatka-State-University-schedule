@@ -34,7 +34,7 @@ async def clear_db():
         date_datetime = datetime.date(int(date[6:])+2000, int(date[3:5]), int(date[:2]))
         current_date = datetime.date.today()
         # если данные старые, то удаляем из бд
-        if date_datetime <= current_date:
+        if date_datetime < current_date:
             cmd = "delete from schedule where date=? and time_lesson=? and name_teacher=?"
             cur.execute(cmd, (date, record[1], record[2]))
             base.commit()
@@ -176,9 +176,7 @@ async def parsing_xlsx(list_urls):
                         # название дисциплины
                         name_of_discipline = value
                     
-                    if "Элективные дисциплины (модули) по физической культуре и спорту" in name_of_discipline:
-                        name_of_discipline = "Элективные дисциплины (модули) по физической культуре и спорту"
-                            
+                        
                     # названия групп
                     for ii in range(len(list_values)):
                         val = list_values[ii].replace(",","").strip()
@@ -186,6 +184,17 @@ async def parsing_xlsx(list_urls):
                             if val not in name_of_group:
                                 name_of_group.append(val)
                     
+                    if "Элективные дисциплины (модули) по физической культуре и спорту" in name_of_discipline:
+                        name_of_discipline = "Элективные дисциплины (модули) по физической культуре и спорту"
+                    if len(name_of_discipline) > 60:
+                        index = 9999
+                        for group in name_of_group:
+                            temp_index = name_of_discipline.find(group)
+                            if temp_index < index and temp_index>0:
+                                index = temp_index
+                        name_of_discipline = name_of_discipline[:index].strip()
+
+
                     # сортируем названия групп, чтобы было одинаково в бд
                     name_of_group.sort()
                     
