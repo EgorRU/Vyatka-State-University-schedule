@@ -176,6 +176,9 @@ async def parsing_xlsx(list_urls):
                         # название дисциплины
                         name_of_discipline = value
                     
+                    if "Элективные дисциплины (модули) по физической культуре и спорту" in name_of_discipline:
+                        name_of_discipline = "Элективные дисциплины (модули) по физической культуре и спорту"
+                            
                     # названия групп
                     for ii in range(len(list_values)):
                         val = list_values[ii].replace(",","").strip()
