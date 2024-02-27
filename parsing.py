@@ -175,7 +175,6 @@ async def parsing_xlsx(list_urls):
                         
                         # название дисциплины
                         name_of_discipline = value
-                    
                         
                     # названия групп
                     for ii in range(len(list_values)):
@@ -184,6 +183,7 @@ async def parsing_xlsx(list_urls):
                             if val not in name_of_group:
                                 name_of_group.append(val)
                     
+                    # название дисциплины снова, делаем короче
                     if "Элективные дисциплины (модули) по физической культуре и спорту" in name_of_discipline:
                         name_of_discipline = "Элективные дисциплины (модули) по физической культуре и спорту"
                     if len(name_of_discipline) > 60:
@@ -193,7 +193,6 @@ async def parsing_xlsx(list_urls):
                             if temp_index < index and temp_index>0:
                                 index = temp_index
                         name_of_discipline = name_of_discipline[:index].strip()
-
 
                     # сортируем названия групп, чтобы было одинаково в бд
                     name_of_group.sort()

@@ -59,13 +59,35 @@ async def get_list_cabinet():
 
 # получение возможного листа кнопок для выбора
 async def get_list_schedule(text):
+    # список с валидными данными
+    list_valid_data_for_buttons = []
+    text = text.lower().strip()
+    
     # получение списка групп, преподов и кабинетов
     list_groups_in_db = await get_list_groups()
     list_teachers_in_db = await get_list_teachers()
     list_cabinet_in_db = await get_list_cabinet()
     
+    # проверка на преподов
+    for i in range(len(list_teachers_in_db)):
+        if text == list_teachers_in_db[i].split()[0].strip().lower():
+            list_valid_data_for_buttons.append(list_teachers_in_db[i])
+    
+    # если список не пуст, то возвращаем его
+    if len(list_valid_data_for_buttons)>0:
+        return list_valid_data_for_buttons
+    
+    # проверка на кабинеты
+    for i in range(len(list_cabinet_in_db)):
+        if text == list_cabinet_in_db[i].strip().lower():
+            list_valid_data_for_buttons.append(list_cabinet_in_db[i])
+    
+    # если список не пуст, то возвращаем его
+    if len(list_valid_data_for_buttons)>0:
+        return list_valid_data_for_buttons
+    
+    # иначе это название группы, парсим название группы
     # добавляем необработанную строку сразу же в список, который дальше проверяем
-    text = text.lower()
     list_to_check = [text]
     
     # режем строку на куски, где разделителем является тире
@@ -73,11 +95,6 @@ async def get_list_schedule(text):
         input_split_dash = text.split("-")
         input_split_dash = [value.strip() for value in input_split_dash if value!="" and value!=" "]
         if len(input_split_dash)>1:
-            if input_split_dash[0].isdigit() and input_split_dash[1].isdigit():
-                if "-".join(input_split_dash[:2]).strip() in list_cabinet_in_db:
-                    return ["-".join(input_split_dash[:2]).strip()]
-                else:
-                    return []
             list_symbol = ['б', 'м', 'а', 'с']
             for i in list_symbol:
                 list_to_check.append(f"{input_split_dash[0]}{i}-{input_split_dash[1]}")
@@ -92,22 +109,24 @@ async def get_list_schedule(text):
             for i in list_symbol:
                 list_to_check.append(f"{input_split_dash[0]}{i}-{input_split_dash[1]}")
             list_to_check.append(f"{input_split_dash[0]}-{input_split_dash[1]}")
-    # проверяем наш список на валидность, что валидно - будут кнопки
-    list_valid_data_for_buttons = []
+    
+    # если нет не пробелов, не тире, просто одна строка
+    new_text = text.split()
+    if len(new_text)==1:
+        number = text[-1]
+        name_group = text[:-1]
+        list_symbol = ['б', 'м', 'а', 'с']
+        for i in list_symbol:
+            list_to_check.append(f"{name_group}{i}-{number}")
+        list_to_check.append(f"{name_group}-{number}")
+        if len(list_to_check)>10:
+            return []
+    # проверка групп
     for valid_value_in_db in list_groups_in_db:
         for value_for_check in list_to_check:
             if value_for_check in valid_value_in_db.lower() and valid_value_in_db not in list_valid_data_for_buttons:
                 list_valid_data_for_buttons.append(valid_value_in_db)
     
-    for valid_value_in_db in list_teachers_in_db:
-        for value_for_check in list_to_check:
-            if value_for_check in valid_value_in_db.lower() and valid_value_in_db not in list_valid_data_for_buttons:
-                list_valid_data_for_buttons.append(valid_value_in_db)
-
-    for valid_value_in_db in list_cabinet_in_db:
-        for value_for_check in list_to_check:
-            if value_for_check in valid_value_in_db.lower() and valid_value_in_db not in list_valid_data_for_buttons:
-                list_valid_data_for_buttons.append(valid_value_in_db)
     return list_valid_data_for_buttons
 
 
@@ -146,6 +165,7 @@ async def get_data_by_valid_text(valid_text):
 
 # получение расписания по выбранной дате
 async def get_schedule_by_date(valid_text, period):
+    # получаем все даты, которые нужно вывести
     full_data = await get_data_by_valid_text(valid_text)
     list_date = []
     if period=="Сегод": 
@@ -159,14 +179,18 @@ async def get_schedule_by_date(valid_text, period):
         end_week = period[10:]
         date_begin_week = datetime.date(int(begin_week[:4]), int(begin_week[5:7]), int(begin_week[8:]))
         date_end_week = datetime.date(int(end_week[:4]), int(end_week[5:7]), int(end_week[8:]))
-        
-        list_date.append(date_begin_week)
+        if date_begin_week >= datetime.date.today():
+            list_date.append(date_begin_week)
         while date_begin_week < date_end_week:
             date_begin_week += datetime.timedelta(days=1)
-            list_date.append(date_begin_week)
-        
+            if date_begin_week >= datetime.date.today():
+                list_date.append(date_begin_week)
+     
+    # по дням, по которым должны вывести расписание, ищем его и выводи
     is_global_true = False
     text = f"➡️ {valid_text}\n\n"
+    if len(list_date)==0:
+        text += f"➡️ {date_begin_week}-{date_end_week}\n\nПар нет\n\n"
     for day in list_date:
         if day.weekday()<6:
             is_true = False
@@ -179,14 +203,14 @@ async def get_schedule_by_date(valid_text, period):
                     text += f"{day_data[5]}\n"
                     text += f"{day_data[2]}\n" if day_data[2] != None else ""
                     text += f"{day_data[3]}\n"  if day_data[3] != None else ""
-                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
+                    text += f"{day_data[4]}\n\n" if valid_text not in day_data[4] else f"{valid_text}\n\n"
                 elif day == day_data[0]:
                     is_global_true = True
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
                     text += f"{day_data[2]}\n" if day_data[2] != None else ""
                     text += f"{day_data[3]}\n" if day_data[3] != None else ""
-                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
+                    text += f"{day_data[4]}\n\n" if valid_text not in day_data[4] else f"{valid_text}\n\n"
             if not is_true:
                 text += f"➡️ {number_day_to_day_week[day.weekday()]} | {day}:\n\nПар нет\n\n"
         
@@ -203,12 +227,12 @@ async def get_schedule_by_date(valid_text, period):
                     text += f"{day_data[5]}\n"
                     text += f"{day_data[2]}\n" if day_data[2] != None else ""
                     text += f"{day_data[3]}\n" if day_data[3] != None else ""
-                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
+                    text += f"{day_data[4]}\n\n" if valid_text not in day_data[4] else f"{valid_text}\n\n"
                 elif next_day == day_data[0]:
                     text += f"——/ {day_data[1]} /——\n"
                     text += f"{day_data[5]}\n"
                     text += f"{day_data[2]}\n" if day_data[2] != None else ""
                     text += f"{day_data[3]}\n" if day_data[3] != None else ""
-                    text += f"{day_data[4]}\n\n" if len(day_data[4])<30 else f"{valid_text}\n\n"
+                    text += f"{day_data[4]}\n\n" if valid_text not in day_data[4] else f"{valid_text}\n\n"
             next_day += datetime.timedelta(days=1)
     return text
