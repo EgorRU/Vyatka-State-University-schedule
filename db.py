@@ -119,8 +119,6 @@ async def get_list_schedule(text):
         for i in list_symbol:
             list_to_check.append(f"{name_group}{i}-{number}")
         list_to_check.append(f"{name_group}-{number}")
-        if len(list_to_check)>10:
-            return []
     # проверка групп
     for valid_value_in_db in list_groups_in_db:
         for value_for_check in list_to_check:

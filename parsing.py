@@ -22,25 +22,28 @@ async def clear_db():
     cur = base.cursor()
     
     # ищем записи в бд по конкретному времени и преподу
-    cmd = "select date, time_lesson, name_teacher from schedule"
-    data = cur.execute(cmd).fetchall()
+    cmd = "select date from schedule"
+    data_by_db = cur.execute(cmd).fetchall()
     
-    # кол-во удалённых строк
-    count = 0
+    list_date = []
+    for record in data_by_db:
+        temp_date = record[0]
+        date_datetime = datetime.date(int(temp_date[6:])+2000, int(temp_date[3:5]), int(temp_date[:2]))
+        list_date.append(date_datetime)
     
-    # по каждой строке в бд
-    for record in data:
-        date = record[0]
-        date_datetime = datetime.date(int(date[6:])+2000, int(date[3:5]), int(date[:2]))
-        current_date = datetime.date.today()
-        # если данные старые, то удаляем из бд
-        if date_datetime < current_date:
-            cmd = "delete from schedule where date=? and time_lesson=? and name_teacher=?"
-            cur.execute(cmd, (date, record[1], record[2]))
+    data = list(set(list_date))
+    
+    current_date = datetime.date.today()
+    for date in data:
+        if date < current_date:
+            cmd = "delete from schedule where date=?"
+            day = date.day if len(str(date.day))==2 else f"0{date.day}"
+            month = date.month if len(str(date.month))==2 else f"0{date.month}"
+            year = date.year-2000
+            temp_date = f"{day}.{month}.{year}"
+            cur.execute(cmd, (temp_date,))
             base.commit()
-            count += 1
     base.close()
-    logging.info(f"Удаленно строк: {count}\n")
     
 
 # получение данных с сайта
@@ -203,9 +206,9 @@ async def parsing_xlsx(list_urls):
                 
                 # если данные свежие, то записываем в бд
                 if date_datetime >= current_date:
-                    count += 1
-                    await update_db(date, time_lesson, name_teacher, cabinet_number, name_of_group, name_of_discipline)
-        
+                    if not (name_teacher==None and cabinet_number==None and name_of_group==None and name_of_discipline==None):
+                        count += 1
+                        await update_db(date, time_lesson, name_teacher, cabinet_number, name_of_group, name_of_discipline)
         # спим
         await asyncio.sleep(1)
         
