@@ -1,0 +1,127 @@
+2024-06-21 18:29:34,773:  Start polling
+2024-06-21 18:29:34,845:  Run polling for bot @TestTDDBot id=6892660269 - 'Тестовый бот'
+2024-06-21 18:29:58,635:  Update id=465214783 is handled. Duration 266 ms by bot id=6892660269
+2024-06-21 18:30:01,848:  Update id=465214784 is handled. Duration 156 ms by bot id=6892660269
+2024-06-21 18:30:03,710:  Update id=465214785 is handled. Duration 203 ms by bot id=6892660269
+2024-06-21 18:31:29,756:  Update id=465214786 is handled. Duration 280 ms by bot id=6892660269
+2024-06-21 18:32:00,846:  Update id=465214787 is not handled. Duration 29531 ms by bot id=6892660269
+2024-06-21 18:32:00,846:  Polling stopped
+2024-06-21 18:32:00,846:  Polling stopped for bot @TestTDDBot id=6892660269 - 'Тестовый бот'
+2024-06-21 18:32:01,330:  Task exception was never retrieved
+future: <Task finished name='Task-32' coro=<Dispatcher._process_update() done, defined at D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\dispatcher.py:296> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "D:\Bots\schedulevyatsu\main.py", line 15, in <module>
+    asyncio.run(main())
+  File "D:\Program Files\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "D:\Program Files\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "D:\Program Files\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+  File "D:\Program Files\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+  File "D:\Program Files\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 49, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 170, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\router.py", line 162, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Bots\schedulevyatsu\bot.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\Bots\schedulevyatsu\bot.py", line 99, in find_today
+    keyboard, text = await get_keyboard_and_text(callback.data[5:], callback.data[:5])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Bots\schedulevyatsu\db.py", line 395, in get_keyboard_and_text
+    text = await get_schedule_by_date(valid_text, period)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Bots\schedulevyatsu\db.py", line 261, in get_schedule_by_date
+    all_data_from_date = await get_all_data_from_date(valid_text, last_date)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Bots\schedulevyatsu\db.py", line 164, in get_all_data_from_date
+    list_data = cur.execute(cmd,(date, valid_text, valid_text,)).fetchall()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Program Files\Python312\Lib\asyncio\runners.py", line 157, in _on_sigint
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+2024-06-21 18:32:04,932:  Start polling
+2024-06-21 18:32:05,012:  Run polling for bot @TestTDDBot id=6892660269 - 'Тестовый бот'
+2024-06-21 18:32:11,650:  Update id=465214788 is handled. Duration 312 ms by bot id=6892660269
+2024-06-21 18:32:14,833:  Update id=465214789 is handled. Duration 1765 ms by bot id=6892660269
+2024-06-21 18:32:29,592:  Polling stopped
+2024-06-21 18:32:29,842:  Polling stopped for bot @TestTDDBot id=6892660269 - 'Тестовый бот'
+2024-06-21 18:32:36,542:  Traceback (most recent call last):
+  File "D:\Bots\schedulevyatsu\parsing.py", line 338, in start_parsing_xlsx
+    await try_parsing_url(url)
+  File "D:\Bots\schedulevyatsu\parsing.py", line 311, in try_parsing_url
+    await update_db(date, time_lesson, cabinet_number, None, None, None, empty = True)
+  File "D:\Bots\schedulevyatsu\parsing.py", line 144, in update_db
+    cur.execute(cmd, (date, time_lesson, cabinet_number,))
+  File "D:\Program Files\Python312\Lib\asyncio\runners.py", line 157, in _on_sigint
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+Traceback (most recent call last):
+  File "D:\Bots\schedulevyatsu\parsing.py", line 338, in start_parsing_xlsx
+    await try_parsing_url(url)
+  File "D:\Bots\schedulevyatsu\parsing.py", line 311, in try_parsing_url
+    await update_db(date, time_lesson, cabinet_number, None, None, None, empty = True)
+  File "D:\Bots\schedulevyatsu\parsing.py", line 144, in update_db
+    cur.execute(cmd, (date, time_lesson, cabinet_number,))
+  File "D:\Program Files\Python312\Lib\asyncio\runners.py", line 157, in _on_sigint
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+2024-06-21 18:32:40,941:  Start polling
+2024-06-21 18:32:41,021:  Run polling for bot @TestTDDBot id=6892660269 - 'Тестовый бот'
+2024-06-21 18:32:45,705:  Update id=465214790 is handled. Duration 250 ms by bot id=6892660269
+2024-06-21 18:32:47,809:  Update id=465214791 is handled. Duration 672 ms by bot id=6892660269
