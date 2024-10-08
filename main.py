@@ -1,14 +1,22 @@
-from multiprocessing import Process
 import asyncio
+from aiogram import Dispatcher, Bot
+from multiprocessing import Process
 
-from bot import start_bot
-from parsing import main as start_parsing
+from config import TOKEN
+from parsing import start_parsing
+from models import async_main
+from user import router_user
 
 
 async def main():
-    p1 = Process(target=start_parsing)
-    p1.start()
-    await start_bot()
+    await async_main()
+    process = Process(target=start_parsing)
+    process.start()
+    bot = Bot(TOKEN)
+    dp = Dispatcher()
+    dp.include_router(router_user)
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
