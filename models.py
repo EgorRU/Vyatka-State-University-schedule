@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, String, Integer
+from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, AsyncSession, create_async_engine
 
@@ -20,8 +20,8 @@ class User(Base):
     time_last: Mapped[str] = mapped_column(String(50), nullable=True)
     count: Mapped[int] = mapped_column(nullable=True)
 
-class Shedule(Base):
-    __tablename__ = 'shedules'
+class Schedule(Base):
+    __tablename__ = 'schedules'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     date: Mapped[str] = mapped_column(String(50), nullable=True)
@@ -30,15 +30,6 @@ class Shedule(Base):
     name_group: Mapped[str] = mapped_column(String(50), nullable=True)
     name_teacher: Mapped[str] = mapped_column(String(50), nullable=True)
     name_discipline: Mapped[str] = mapped_column(String(50), nullable=True)
-
-class Mailing(Base):
-    __tablename__ = 'mailing'
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    name_group: Mapped[str] = mapped_column(String(50))
-    time: Mapped[str] = mapped_column(String(50))
-
 
 async def async_main():
     async with engine.begin() as conn:

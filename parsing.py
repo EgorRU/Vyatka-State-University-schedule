@@ -1,12 +1,19 @@
 from xls2xlsx import XLS2XLSX
 from openpyxl import load_workbook
-import asyncio
 import os
 import requests
 import datetime
+import asyncio
+import logging
 import traceback
 
 from dbrequests import delete_outdated_schedules, update_schedule
+
+logging.basicConfig(
+    filename='log.txt',
+    level=logging.ERROR, 
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 time_from_pair = {
     "1 пара": "8:20-9:50",
@@ -58,8 +65,9 @@ async def get_urls(response):
                 current_date = datetime.date.today()
                 if current_date < last_date and (last_date - current_date).days < 60:
                     list_urls.append(url)
-            except (ValueError, IndexError):
-                pass  # Пропускаем, если дата невалидна
+            except Exception as e:
+                logging.error(f"{e}")
+                logging.error(traceback.format_exc())
 
         # Продолжаем поиск следующей ссылки
         text = text[end_index:]
@@ -160,7 +168,7 @@ async def parsing_url(url: str) -> None:
                     
                     # если в конце названия группы запятая, то дальше идёт номер подгруппы
                     if text_split[0][-1] == ",":
-                        name_of_group.append(" ".join(text_split[:3]))
+                        name_of_group.append(text_split[0][:-1])
                         text_split = text_split[3:]
                     else:
                         name_of_group.append(text_split[0])
@@ -193,10 +201,14 @@ async def start_parsing_xlsx():
             response = await get_content(url_site)
             urls = await get_urls(response)
             for url in urls:
-                await parsing_url(url)
-        except:
-            print(f"{traceback.format_exc()}\n")
-        
+                try:
+                    await parsing_url(url)
+                except Exception as e:
+                    logging.error(f"{e}")
+                    logging.error(traceback.format_exc())
+        except Exception as e:
+            logging.error(f"{e}")
+            logging.error(traceback.format_exc())
         await asyncio.sleep(9000)
 
 

@@ -1,5 +1,7 @@
+__pycache__/
+venv/
 config.py
 database.db
-__pycache__/
+log.txt
 *.xlsx
 *.xls
