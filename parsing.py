@@ -168,7 +168,7 @@ async def parsing_url(url: str) -> None:
                     
                     # если в конце названия группы запятая, то дальше идёт номер подгруппы
                     if text_split[0][-1] == ",":
-                        name_of_group.append(text_split[0][:-1])
+                        name_of_group.append(" ".join(text_split[:3]))
                         text_split = text_split[3:]
                     else:
                         name_of_group.append(text_split[0])

@@ -18,6 +18,8 @@ number_day_to_day_week = {
 async def get_list_schedule(text):
     if text == "." or text == "_" or text == "__":
         return []
+    if "," in text:
+        text = text.split(",")[0].strip()
     # список с валидными данными
     list_valid_data_for_buttons = []
     text = text.strip().lower()
@@ -89,7 +91,11 @@ async def get_list_schedule(text):
     for valid_value_from_db in list_groups_from_db:
         for value_for_check in list_to_check:
             if value_for_check in valid_value_from_db.lower() and valid_value_from_db not in list_valid_data_for_buttons:
-                list_valid_data_for_buttons.append(valid_value_from_db)
+                # если группа с номером подгруппы
+                if len(valid_value_from_db.split())>1:
+                    list_valid_data_for_buttons.append(valid_value_from_db.split()[0][:-1])
+                else:
+                    list_valid_data_for_buttons.append(valid_value_from_db)
     list_valid_data_for_buttons = list(set(list_valid_data_for_buttons))
     list_valid_data_for_buttons.sort()
     return list_valid_data_for_buttons
